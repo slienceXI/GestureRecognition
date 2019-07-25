@@ -10,6 +10,7 @@ import os
 import cv2
 import json
 import shutil
+import re
 
 class BasicChar:
     fingerCnt = "0"
@@ -20,8 +21,10 @@ memory = BasicChar()
 
 TRAINSET_DIR = './TrainSet/'
 
-img_names = os.listdir(TRAINSET_DIR + 'img/unsorted/')
-img_names = img_names.sort()
+img_names = [x for x in os.listdir(TRAINSET_DIR + 'img/unsorted/') if re.match("img[0-9]*\.png", x, flags=0) != None]
+img_names.sort()
+
+print(img_names)
 
 config_file = open(TRAINSET_DIR + "config/config.json", 'r')
 config_dict = json.load(config_file)
