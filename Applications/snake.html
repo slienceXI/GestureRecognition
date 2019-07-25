@@ -1,47 +1,63 @@
-<canvas id="snake" width="800" height="800"></canvas>
+<canvas id="snake" width="1000" height="800"></canvas>
 <script>
 
 vx=0; vy=0;
-
 running=0;
-
 px=0; py=0;
-
 gs=20; tc=40;
-
 ax=10; ay=10;
-
 trail=[];
-snakeLen = 5;
-
+snakeLen=0;
+highScore=0;
+turning = 0;
 gameId = 0;
 
 window.onload=function() {
 	canv=document.getElementById("snake");
 	ctx=canv.getContext("2d");
 	document.addEventListener("keydown",keyPush);
-	gameId = setInterval(game, 1000/5);
 	running=1;
+  gameId = setInterval(game, 1000/10);
 	px=20; py=20;
-	
+  ctx.fillStyle="black";
+  ctx.fillRect(0,0,800,800);
+  ctx.fillStyle="grey";
+  ctx.fillRect(800,0,200,800);
 }
 
 function game() {
 	px+=vx;
 	py+=vy;
-	if(px < 0) {px += tc - 1;}
+	if(px < 0) {px += tc;}
 	if(px > tc - 1) {px = 0;}
-	if(py < 0) {py += tc - 1;}
+	if(py < 0) {py += tc;}
 	if(py > tc - 1) {py = 0;}
 	ctx.fillStyle="black";
 	ctx.fillRect(0,0,canv.width,canv.height);
+  ctx.fillStyle="grey";
+  ctx.fillRect(800,0,200,800);
+  ctx.fillStyle="white";
+  ctx.fillRect(890,700,gs,gs);
+  ctx.fillRect(890,700-2*gs,gs,gs);
+  ctx.fillRect(890-2*gs,700,gs,gs);
+  ctx.fillRect(890+2*gs,700,gs,gs);
+  ctx.font="40px sans-serif";
+  score_str = snakeLen.toString();
+  ctx.fillText(score_str,897 - score_str.length*10,100);
+  ctx.font="20px sans-serif";
+  high_str = "- " + highScore.toString() + " -"
+  ctx.fillText(high_str,905 - high_str.length*5,150);
 	ctx.fillStyle="red";
 	ctx.fillRect(ax*gs,ay*gs,gs-2,gs-2);
+  ctx.fillRect(890 + 2*gs*vx,700+ 2*gs*(vy<0?vy:0),gs,gs);
+  ctx.fillStyle="blue";
+  ctx.fillRect(px*gs,py*gs,gs-2,gs-2);
 	ctx.fillStyle="lime";
 	for(var i=0; i < trail.length; i++) {
 		ctx.fillRect(trail[i].x*gs,trail[i].y*gs,gs-2,gs-2);
 		if(trail[i].x==px && trail[i].y==py) {
-			snakeLen = 5;
+      alert("Dead");
+			snakeLen = 0;
 		}
 	}
 	trail.push({x:px, y:py});
@@ -50,29 +66,38 @@ function game() {
 	}
 	if(ax==px && ay==py) {
 		snakeLen += 1;
+    highScore = highScore > snakeLen ? highScore : snakeLen;
 		ax = Math.floor(Math.random()*tc);
 		ay = Math.floor(Math.random()*tc);
 	}
+  
+  
+  
+  turning = 0;
 }
 
 function keyPush(evt) {
 	switch(evt.keyCode) {
 		case 37:
-			vx=-1; vy=0;
+      if(vx==1 && vy==0 || turning == 1){break;}
+      vx=-1; vy=0; turning = 1;
 			break;
 		case 38:
-			vx=0; vy=-1;
+      if(vx==0 && vy==1 || turning == 1){break;}
+			vx=0; vy=-1; turning = 1;
 			break;
 		case 39:
-			vx=1; vy=0;
+      if(vx==-1 && vy==0 || turning == 1){break;}
+			vx=1; vy=0; turning = 1;
 			break;
 		case 40:
-			vx=0; vy=1;
+      if(vx==0 && vy==-1 || turning == 1){break;}
+			vx=0; vy=1; turning = 1;
 			break;
 		case 27:
 			switch(running) {
 				case 0:
-					gameId = setInterval(game, 1000/5);
+					gameId = setInterval(game, 1000/10);
 					running=1;
 					break;
 				default:
