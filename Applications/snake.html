@@ -1,0 +1,87 @@
+<canvas id="snake" width="800" height="800"></canvas>
+<script>
+
+vx=0; vy=0;
+
+running=0;
+
+px=0; py=0;
+
+gs=20; tc=40;
+
+ax=10; ay=10;
+
+trail=[];
+snakeLen = 5;
+
+gameId = 0;
+
+window.onload=function() {
+	canv=document.getElementById("snake");
+	ctx=canv.getContext("2d");
+	document.addEventListener("keydown",keyPush);
+	gameId = setInterval(game, 1000/5);
+	running=1;
+	px=20; py=20;
+	
+}
+
+function game() {
+	px+=vx;
+	py+=vy;
+	if(px < 0) {px += tc - 1;}
+	if(px > tc - 1) {px = 0;}
+	if(py < 0) {py += tc - 1;}
+	if(py > tc - 1) {py = 0;}
+	ctx.fillStyle="black";
+	ctx.fillRect(0,0,canv.width,canv.height);
+	ctx.fillStyle="red";
+	ctx.fillRect(ax*gs,ay*gs,gs-2,gs-2);
+	ctx.fillStyle="lime";
+	for(var i=0; i < trail.length; i++) {
+		ctx.fillRect(trail[i].x*gs,trail[i].y*gs,gs-2,gs-2);
+		if(trail[i].x==px && trail[i].y==py) {
+			snakeLen = 5;
+		}
+	}
+	trail.push({x:px, y:py});
+	while(trail.length>snakeLen) {
+	trail.shift(); 
+	}
+	if(ax==px && ay==py) {
+		snakeLen += 1;
+		ax = Math.floor(Math.random()*tc);
+		ay = Math.floor(Math.random()*tc);
+	}
+}
+
+function keyPush(evt) {
+	switch(evt.keyCode) {
+		case 37:
+			vx=-1; vy=0;
+			break;
+		case 38:
+			vx=0; vy=-1;
+			break;
+		case 39:
+			vx=1; vy=0;
+			break;
+		case 40:
+			vx=0; vy=1;
+			break;
+		case 27:
+			switch(running) {
+				case 0:
+					gameId = setInterval(game, 1000/5);
+					running=1;
+					break;
+				default:
+					clearInterval(gameId);
+					running=0;
+					break;
+			}
+			break;
+	}
+}
+
+</script>
