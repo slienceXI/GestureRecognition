@@ -21,6 +21,7 @@ memory = BasicChar()
 TRAINSET_DIR = './TrainSet/'
 
 img_names = os.listdir(TRAINSET_DIR + 'img/unsorted/')
+img_names = img_names.sort()
 
 config_file = open(TRAINSET_DIR + "config/config.json", 'r')
 config_dict = json.load(config_file)
